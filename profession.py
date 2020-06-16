@@ -4,10 +4,8 @@ import requests
 import xlsxwriter
 from bs4 import BeautifulSoup
 
-if sys.platform == 'linux':
-    excelFile = r'/home/molla/Asztal/profession.xlsx'
-else:
-    excelFile = r'C:\Users\admin\Desktop\profession.xlsx'
+
+excelFile = r'./profession.xlsx'
 
 pageNum = 1
 links = []
@@ -25,24 +23,27 @@ while True:
     all_card = soup.find_all(class_="card")
 
     for card in all_card:
-        job = card.find(class_="job-card__title").get_text().strip()
-        jobs.append(job.splitlines()[0])
+        try:
+            job = card.find(class_="job-card__title").get_text().strip()
+            jobs.append(job.splitlines()[0])
 
-        link = card.select('h2 a')
-        links.append(link[0]['href'])
+            link = card.select('h2 a')
+            links.append(link[0]['href'])
 
-        firm = card.find(class_='job-card__company-name').get_text().strip().replace('"', '')
-        firms.append(firm)
+            firm = card.find(class_='job-card__company-name').get_text().strip().replace('"', '')
+            firms.append(firm)
 
-        address = card.find(class_='job-card__company-address').get_text().strip()
-        addresses.append(address)
+            address = card.find(class_='job-card__company-address').get_text().strip()
+            addresses.append(address)
 
-        salary = card.select('.bonus_salary > dd:nth-child(2)')
-        if salary:
-            salary = salary[0].text
-        else:
-            salary = ''
-        salaries.append(salary)
+            salary = card.select('.bonus_salary > dd:nth-child(2)')
+            if salary:
+                salary = salary[0].text
+            else:
+                salary = ''
+            salaries.append(salary)
+        except:
+            continue
 
     next_btn = soup.find(class_='next')
     if not next_btn:
